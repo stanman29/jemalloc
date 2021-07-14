@@ -1,6 +1,8 @@
 #ifndef JEMALLOC_INTERNAL_MALLOC_IO_H
 #define JEMALLOC_INTERNAL_MALLOC_IO_H
 
+#include "jemalloc/internal/jemalloc_internal_types.h"
+
 #ifdef _WIN32
 #  ifdef _WIN64
 #    define FMT64_PREFIX "ll"
@@ -40,6 +42,7 @@
  */
 #define MALLOC_PRINTF_BUFSIZE	4096
 
+write_cb_t wrtmessage;
 int buferror(int err, char *buf, size_t buflen);
 uintmax_t malloc_strtoumax(const char *restrict nptr, char **restrict endptr,
     int base);
@@ -54,13 +57,49 @@ size_t malloc_vsnprintf(char *str, size_t size, const char *format,
 size_t malloc_snprintf(char *str, size_t size, const char *format, ...)
     JEMALLOC_FORMAT_PRINTF(3, 4);
 /*
- * The caller can set write_cb and cbopaque to null to choose to print with the
+ * The caller can set write_cb to null to choose to print with the
  * je_malloc_message hook.
  */
-void malloc_vcprintf(void (*write_cb)(void *, const char *), void *cbopaque,
-    const char *format, va_list ap);
-void malloc_cprintf(void (*write_cb)(void *, const char *), void *cbopaque,
-    const char *format, ...) JEMALLOC_FORMAT_PRINTF(3, 4);
+void malloc_vcprintf(write_cb_t *write_cb, void *cbopaque, const char *format,
+    va_list ap);
+void malloc_cprintf(write_cb_t *write_cb, void *cbopaque, const char *format,
+    ...) JEMALLOC_FORMAT_PRINTF(3, 4);
 void malloc_printf(const char *format, ...) JEMALLOC_FORMAT_PRINTF(1, 2);
+
+static inline ssize_t
+malloc_write_fd(int fd, const void *buf, size_t count) {
+#if defined(JEMALLOC_USE_SYSCALL) && defined(SYS_write)
+	/*
+	 * Use syscall(2) rather than write(2) when possible in order to avoid
+	 * the possibility of memory allocation within libc.  This is necessary
+	 * on FreeBSD; most operating systems do not have this problem though.
+	 *
+	 * syscall() returns long or int, depending on platform, so capture the
+	 * result in the widest plausible type to avoid compiler warnings.
+	 */
+	long result = syscall(SYS_write, fd, buf, count);
+#else
+	ssize_t result = (ssize_t)write(fd, buf,
+#ifdef _WIN32
+	    (unsigned int)
+#endif
+	    count);
+#endif
+	return (ssize_t)result;
+}
+
+static inline ssize_t
+malloc_read_fd(int fd, void *buf, size_t count) {
+#if defined(JEMALLOC_USE_SYSCALL) && defined(SYS_read)
+	long result = syscall(SYS_read, fd, buf, count);
+#else
+	ssize_t result = read(fd, buf,
+#ifdef _WIN32
+	    (unsigned int)
+#endif
+	    count);
+#endif
+	return (ssize_t)result;
+}
 
 #endif /* JEMALLOC_INTERNAL_MALLOC_IO_H */

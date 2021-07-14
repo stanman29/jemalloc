@@ -15,7 +15,12 @@ background_thread_enabled_set(tsdn_t *tsdn, bool state) {
 JEMALLOC_ALWAYS_INLINE background_thread_info_t *
 arena_background_thread_info_get(arena_t *arena) {
 	unsigned arena_ind = arena_ind_get(arena);
-	return &background_thread_info[arena_ind % ncpus];
+	return &background_thread_info[arena_ind % max_background_threads];
+}
+
+JEMALLOC_ALWAYS_INLINE background_thread_info_t *
+background_thread_info_get(size_t ind) {
+	return &background_thread_info[ind % max_background_threads];
 }
 
 JEMALLOC_ALWAYS_INLINE uint64_t
@@ -50,7 +55,7 @@ arena_background_thread_inactivity_check(tsdn_t *tsdn, arena_t *arena,
 	    arena_background_thread_info_get(arena);
 	if (background_thread_indefinite_sleep(info)) {
 		background_thread_interval_check(tsdn, arena,
-		    &arena->decay_dirty, 0);
+		    &arena->pa_shard.pac.decay_dirty, 0);
 	}
 }
 

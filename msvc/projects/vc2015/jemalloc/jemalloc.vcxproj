@@ -38,28 +38,61 @@
     <ClCompile Include="..\..\..\..\src\arena.c" />
     <ClCompile Include="..\..\..\..\src\background_thread.c" />
     <ClCompile Include="..\..\..\..\src\base.c" />
+    <ClCompile Include="..\..\..\..\src\bin.c" />
+    <ClCompile Include="..\..\..\..\src\bin_info.c" />
     <ClCompile Include="..\..\..\..\src\bitmap.c" />
+    <ClCompile Include="..\..\..\..\src\buf_writer.c" />
+    <ClCompile Include="..\..\..\..\src\cache_bin.c" />
     <ClCompile Include="..\..\..\..\src\ckh.c" />
+    <ClCompile Include="..\..\..\..\src\counter.c" />
     <ClCompile Include="..\..\..\..\src\ctl.c" />
+    <ClCompile Include="..\..\..\..\src\decay.c" />
+    <ClCompile Include="..\..\..\..\src\div.c" />
+    <ClCompile Include="..\..\..\..\src\ecache.c" />
+    <ClCompile Include="..\..\..\..\src\edata.c" />
+    <ClCompile Include="..\..\..\..\src\edata_cache.c" />
+    <ClCompile Include="..\..\..\..\src\ehooks.c" />
+    <ClCompile Include="..\..\..\..\src\emap.c" />
+    <ClCompile Include="..\..\..\..\src\eset.c" />
+    <ClCompile Include="..\..\..\..\src\exp_grow.c" />
     <ClCompile Include="..\..\..\..\src\extent.c" />
     <ClCompile Include="..\..\..\..\src\extent_dss.c" />
     <ClCompile Include="..\..\..\..\src\extent_mmap.c" />
-    <ClCompile Include="..\..\..\..\src\hash.c" />
-    <ClCompile Include="..\..\..\..\src\hooks.c" />
+    <ClCompile Include="..\..\..\..\src\fxp.c" />
+    <ClCompile Include="..\..\..\..\src\hook.c" />
+    <ClCompile Include="..\..\..\..\src\hpa.c" />
+    <ClCompile Include="..\..\..\..\src\hpa_central.c" />
+    <ClCompile Include="..\..\..\..\src\hpa_hooks.c" />
+    <ClCompile Include="..\..\..\..\src\hpdata.c" />
+    <ClCompile Include="..\..\..\..\src\inspect.c" />
     <ClCompile Include="..\..\..\..\src\jemalloc.c" />
     <ClCompile Include="..\..\..\..\src\large.c" />
     <ClCompile Include="..\..\..\..\src\log.c" />
     <ClCompile Include="..\..\..\..\src\malloc_io.c" />
     <ClCompile Include="..\..\..\..\src\mutex.c" />
-    <ClCompile Include="..\..\..\..\src\mutex_pool.c" />
     <ClCompile Include="..\..\..\..\src\nstime.c" />
+    <ClCompile Include="..\..\..\..\src\pa.c" />
+    <ClCompile Include="..\..\..\..\src\pa_extra.c" />
+    <ClCompile Include="..\..\..\..\src\pai.c" />
+    <ClCompile Include="..\..\..\..\src\pac.c" />
     <ClCompile Include="..\..\..\..\src\pages.c" />
-    <ClCompile Include="..\..\..\..\src\prng.c" />
+    <ClCompile Include="..\..\..\..\src\peak_event.c" />
     <ClCompile Include="..\..\..\..\src\prof.c" />
+    <ClCompile Include="..\..\..\..\src\prof_data.c" />
+    <ClCompile Include="..\..\..\..\src\prof_log.c" />
+    <ClCompile Include="..\..\..\..\src\prof_recent.c" />
+    <ClCompile Include="..\..\..\..\src\prof_stats.c" />
+    <ClCompile Include="..\..\..\..\src\prof_sys.c" />
+    <ClCompile Include="..\..\..\..\src\psset.c" />
     <ClCompile Include="..\..\..\..\src\rtree.c" />
+    <ClCompile Include="..\..\..\..\src\safety_check.c" />
+    <ClCompile Include="..\..\..\..\src\sc.c" />
+    <ClCompile Include="..\..\..\..\src\sec.c" />
     <ClCompile Include="..\..\..\..\src\stats.c" />
     <ClCompile Include="..\..\..\..\src\sz.c" />
     <ClCompile Include="..\..\..\..\src\tcache.c" />
+    <ClCompile Include="..\..\..\..\src\test_hooks.c" />
+    <ClCompile Include="..\..\..\..\src\thread_event.c" />
     <ClCompile Include="..\..\..\..\src\ticker.c" />
     <ClCompile Include="..\..\..\..\src\tsd.c" />
     <ClCompile Include="..\..\..\..\src\witness.c" />
@@ -197,7 +230,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_REENTRANT;_WINDLL;DLLEXPORT;JEMALLOC_DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>JEMALLOC_NO_PRIVATE_NAMESPACE;_REENTRANT;_WINDLL;DLLEXPORT;JEMALLOC_DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\..\..\include;..\..\..\..\include\msvc_compat;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4090;4146;4267;4334</DisableSpecificWarnings>
       <ProgramDataBaseFileName>$(OutputPath)$(TargetName).pdb</ProgramDataBaseFileName>
@@ -213,7 +246,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>JEMALLOC_DEBUG;_REENTRANT;JEMALLOC_EXPORT=;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>JEMALLOC_NO_PRIVATE_NAMESPACE;JEMALLOC_DEBUG;_REENTRANT;JEMALLOC_EXPORT=;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\..\..\include;..\..\..\..\include\msvc_compat;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <DisableSpecificWarnings>4090;4146;4267;4334</DisableSpecificWarnings>
@@ -266,7 +299,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_REENTRANT;_WINDLL;DLLEXPORT;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>JEMALLOC_NO_PRIVATE_NAMESPACE;_REENTRANT;_WINDLL;DLLEXPORT;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\..\..\include;..\..\..\..\include\msvc_compat;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4090;4146;4267;4334</DisableSpecificWarnings>
       <ProgramDataBaseFileName>$(OutputPath)$(TargetName).pdb</ProgramDataBaseFileName>
@@ -286,7 +319,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_REENTRANT;JEMALLOC_EXPORT=;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>JEMALLOC_NO_PRIVATE_NAMESPACE;_REENTRANT;JEMALLOC_EXPORT=;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\..\..\include;..\..\..\..\include\msvc_compat;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4090;4146;4267;4334</DisableSpecificWarnings>

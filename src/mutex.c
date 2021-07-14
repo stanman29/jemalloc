@@ -1,4 +1,3 @@
-#define JEMALLOC_MUTEX_C_
 #include "jemalloc/internal/jemalloc_preamble.h"
 #include "jemalloc/internal/jemalloc_internal_includes.h"
 
@@ -46,7 +45,7 @@ JEMALLOC_EXPORT int	_pthread_mutex_init_calloc_cb(pthread_mutex_t *mutex,
 void
 malloc_mutex_lock_slow(malloc_mutex_t *mutex) {
 	mutex_prof_data_t *data = &mutex->prof_data;
-	UNUSED nstime_t before = NSTIME_ZERO_INITIALIZER;
+	nstime_t before;
 
 	if (ncpus == 1) {
 		goto label_spin_done;
@@ -55,7 +54,8 @@ malloc_mutex_lock_slow(malloc_mutex_t *mutex) {
 	int cnt = 0, max_cnt = MALLOC_MUTEX_MAX_SPIN;
 	do {
 		spin_cpu_spinwait();
-		if (!malloc_mutex_trylock_final(mutex)) {
+		if (!atomic_load_b(&mutex->locked, ATOMIC_RELAXED)
+                    && !malloc_mutex_trylock_final(mutex)) {
 			data->n_spin_acquired++;
 			return;
 		}
@@ -67,7 +67,7 @@ malloc_mutex_lock_slow(malloc_mutex_t *mutex) {
 		return;
 	}
 label_spin_done:
-	nstime_update(&before);
+	nstime_init_update(&before);
 	/* Copy before to after to avoid clock skews. */
 	nstime_t after;
 	nstime_copy(&after, &before);
@@ -103,8 +103,8 @@ label_spin_done:
 static void
 mutex_prof_data_init(mutex_prof_data_t *data) {
 	memset(data, 0, sizeof(mutex_prof_data_t));
-	nstime_init(&data->max_wait_time, 0);
-	nstime_init(&data->tot_wait_time, 0);
+	nstime_init_zero(&data->max_wait_time);
+	nstime_init_zero(&data->tot_wait_time);
 	data->prev_owner = NULL;
 }
 
@@ -144,9 +144,7 @@ malloc_mutex_init(malloc_mutex_t *mutex, const char *name,
 	}
 #  endif
 #elif (defined(JEMALLOC_OS_UNFAIR_LOCK))
-	mutex->lock = OS_UNFAIR_LOCK_INIT;
-#elif (defined(JEMALLOC_OSSPIN))
-	mutex->lock = 0;
+       mutex->lock = OS_UNFAIR_LOCK_INIT;
 #elif (defined(JEMALLOC_MUTEX_INIT_CB))
 	if (postpone_init) {
 		mutex->postponed_next = postponed_mutexes;
@@ -174,7 +172,7 @@ malloc_mutex_init(malloc_mutex_t *mutex, const char *name,
 		mutex->lock_order = lock_order;
 		if (lock_order == malloc_mutex_address_ordered) {
 			witness_init(&mutex->witness, name, rank,
-			    mutex_addr_comp, &mutex);
+			    mutex_addr_comp, mutex);
 		} else {
 			witness_init(&mutex->witness, name, rank, NULL, NULL);
 		}
